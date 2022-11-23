@@ -1,0 +1,48 @@
+plugins {
+	id 'java-library'
+	id 'com.diffplug.spotless'
+}
+
+repositories {
+	mavenCentral()
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+dependencies {
+	implementation libs.jackson.yaml
+	implementation libs.picocli
+}
+
+testing {
+	suites {
+		test {
+			useJUnit('4.13.2')
+		}
+	}
+}
+
+spotless {
+	java {
+		importOrder('java', 'javax', 'de.pieczewski')
+		removeUnusedImports()
+		googleJavaFormat()
+		formatAnnotations()
+
+		licenseHeaderFile new File(rootDir, "configurations/LICENSEHEADER"), '^package'
+	}
+	format 'misc', {
+		target '*.gradle', '*.md', '.gitignore'
+
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
+}
+
+
+compileJava.dependsOn 'spotlessApply'
